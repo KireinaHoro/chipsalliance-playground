@@ -8,3 +8,5 @@ out/
 *.swp
 # idea
 .idea_modules
+
+gemmini_params.h

@@ -9,7 +9,7 @@ import java.io._
 import scala.reflect.io.Directory
 
 object Runner extends App {
-  val build = Paths.get("out/generated-src")
+  val build = Paths.get("out", "generated-src")
   if (Files.exists(build)) {
     val dir = new Directory(new File(build.toString))
     dir.deleteRecursively()
@@ -26,4 +26,7 @@ object Runner extends App {
     new ConfigsAnnotation(Seq(configClass.getName)),
     new OutputBaseNameAnnotation(outputBaseName),
   ))
+
+  val gemminiConf = "gemmini_params.h"
+  Files.move(Paths.get(gemminiConf), Paths.get(build.toString, gemminiConf))
 }
