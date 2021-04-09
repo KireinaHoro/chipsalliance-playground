@@ -328,13 +328,20 @@ object chipyard extends CommonModule with SbtModule { cy =>
     override def millSourcePath = basePath / "fpga"
     override def moduleDeps = super.moduleDeps ++ Seq(shells, chipyard)
   }
+
+  object utilities extends CommonModule with SbtModule {
+    // TODO: FIX
+    override def scalacOptions = Seq("-Xsource:2.11")
+    override def millSourcePath = basePath / "generators" / "utilities"
+    override def moduleDeps = super.moduleDeps ++ Seq(chipyard)
+  }
 }
 
 
 // Dummy
 
 object playground extends CommonModule {
-  override def moduleDeps = super.moduleDeps ++ Seq(myrocketchip, inclusivecache, blocks, shells, firesim, boom, chipyard, chipyard.fpga)
+  override def moduleDeps = super.moduleDeps ++ Seq(myrocketchip, inclusivecache, blocks, shells, firesim, boom, chipyard, chipyard.fpga, chipyard.utilities)
 
   // add some scala ivy module you like here.
   override def ivyDeps = Agg(

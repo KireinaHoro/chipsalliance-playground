@@ -5,6 +5,7 @@ import firrtl.options._
 import firrtl.stage._
 import firrtl.passes.memlib._
 import freechips.rocketchip.stage._
+import utilities.{GenerateSimConfig, GenerateSimFiles}
 
 import java.nio.file._
 import scala.reflect.io.Directory
@@ -27,6 +28,15 @@ object Runner extends App {
   def bp(file: String) = Paths.get(build.toString, file).toString
   def fn(suffix: String) = f"$outputBaseName.$suffix"
   def p(suffix: String) = bp(fn(suffix))
+
+  info("Generating simulation files...")
+  GenerateSimFiles.writeFiles(GenerateSimConfig(
+    targetDir = build.toString,
+    simulator = None,
+  ))
+
+  val bootromDir = "bootrom"
+  Files.move(Paths.get(bootromDir), Paths.get(build.toString, bootromDir))
 
   info("Running generator...")
   Generator.stage.transform(Seq(
