@@ -1,3 +1,4 @@
+import barstools.macros.MacroCompiler
 import barstools.tapeout.transforms.GenerateTopAndHarness
 import barstools.tapeout.transforms.stage._
 import chipyard._
@@ -70,6 +71,17 @@ object Runner extends App {
     RunFirrtlTransformAnnotation(new ReplSeqMem),
     new TargetDirAnnotation(build.toString), // -td
   ))
+
+  Seq("top", "harness") foreach { m: String =>
+    info(f"Running macro compiler for $m...")
+    // gave up; pass commandline directly
+    MacroCompiler.run(Seq(
+      "-n", p(m + ".mems.conf"),
+      "-v", p(m + ".mems.v"),
+      "-f", p(m + ".mems.fir"),
+      "--mode", "synflops",
+    ).toList)
+  }
 
   info("All done.")
 }
