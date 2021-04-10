@@ -10,3 +10,7 @@ out/
 .idea_modules
 
 gemmini_params.h
+
+.Xil/
+vivado*.log
+vivado*.jou
