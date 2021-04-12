@@ -23,7 +23,7 @@ object Runner extends App {
   val builds = Paths.get("out", "history-builds")
   new Directory(builds.toFile).createDirectory()
 
-  val timestamp = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm").format(LocalDateTime.now)
+  val timestamp = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm").format(LocalDateTime.now)
   val thisBuild = Paths.get(builds, timestamp)
   new Directory(thisBuild.toFile).createDirectory(failIfExists = true)
 
