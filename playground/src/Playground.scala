@@ -11,6 +11,7 @@ import utilities.{GenerateSimConfig, GenerateSimFiles}
 import java.io.{File, PrintWriter}
 import java.nio.file._
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import scala.reflect.io.Directory
 import scala.io.Source
 
@@ -22,7 +23,8 @@ object Runner extends App {
   val builds = Paths.get("out", "history-builds")
   new Directory(builds.toFile).createDirectory()
 
-  val thisBuild = Paths.get(builds, LocalDateTime.now.toString)
+  val timestamp = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm").format(LocalDateTime.now)
+  val thisBuild = Paths.get(builds, timestamp)
   new Directory(thisBuild.toFile).createDirectory(failIfExists = true)
 
   val build = Paths.get("out", "generated-src")
