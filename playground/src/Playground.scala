@@ -10,6 +10,7 @@ import utilities.{GenerateSimConfig, GenerateSimFiles}
 
 import java.io.{File, PrintWriter}
 import java.nio.file._
+import java.time.LocalDateTime
 import scala.reflect.io.Directory
 import scala.io.Source
 
@@ -18,12 +19,15 @@ object Runner extends App {
 
   def using[A <: { def close(): Unit }, B](r: A)(f: A => B): B = try { f(r) } finally { r.close() }
 
+  val builds = Paths.get("out", "history-builds")
+  new Directory(builds.toFile).createDirectory()
+
+  val thisBuild = Paths.get(builds, LocalDateTime.now.toString)
+  new Directory(thisBuild.toFile).createDirectory(failIfExists = true)
+
   val build = Paths.get("out", "generated-src")
-  if (Files.exists(build)) {
-    val dir = new Directory(build.toFile)
-    dir.deleteRecursively()
-  }
-  Files.createDirectories(build)
+  Files.deleteIfExists(build)
+  Files.createSymbolicLink(build, Paths.get("../", thisBuild))
 
   val topClass = classOf[CodesignHarness]
   val configClass = classOf[CodesignVCU118Config]
