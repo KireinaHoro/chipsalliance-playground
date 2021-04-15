@@ -27,6 +27,7 @@ class CodesignVCU118 extends Config(
   new WithUART ++
   new WithSPISDCard ++
   new WithDDRMem ++
+  new WithJTAGIOPassthrough ++
   new WithUARTIOPassthrough ++
   new WithSPIIOPassthrough ++
   new WithTLIOPassthrough ++
