@@ -29,8 +29,7 @@ class CodesignHarness(override implicit val p: Parameters) extends VCU118FPGATes
   val pmod_j53_is_jtag = p(VCU118ShellPMOD2) == "PMODJ53_JTAG"
   val jl = Some(if (pmod_is_sdio) if (pmod_j53_is_jtag) "PMOD_J53" else "FMC_J2" else "PMOD_J52")
 
-  val jtagOverlay = Overlay(JTAGDebugOverlayKey, new JTAGDebugVCU118ShellPlacer(this, JTAGDebugShellInput(location = jl)))
-  val io_jtag_bb = dp(JTAGDebugOverlayKey).head.place(JTAGDebugDesignInput()).overlayOutput.jtag
+  val io_jtag_bb = new JTAGDebugVCU118ShellPlacer(this, JTAGDebugShellInput(location = jl)).place(JTAGDebugDesignInput()).overlayOutput.jtag
 
   override lazy val module = new VCU118FPGATestHarnessImp(this)
 }
