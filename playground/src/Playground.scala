@@ -132,5 +132,22 @@ object Runner extends App {
         |""".stripMargin)
   }
 
+  using(new PrintWriter(new File(bp("rerun_impl_from_syn_ckpt.sh")))) {
+    _.write(
+      f"""
+         |#!/usr/bin/env bash
+         |
+         |cd $build
+         |
+         |vivado -nojournal -mode batch \\
+         |  -source ${dp("chipyard", "fpga/scripts/run_impl_bitstream.tcl").toAbsolutePath} \\
+         |  -tclargs \\
+         |    ${bp("obj/post_synth.dcp").toAbsolutePath} \\
+         |    vcu118 \\
+         |    ${bp("debug_obj").toAbsolutePath} \\
+         |    ${dp("fpga-shells", "xilinx/common/tcl").toAbsolutePath}
+         |""".stripMargin)
+  }
+
   info("All done.")
 }
