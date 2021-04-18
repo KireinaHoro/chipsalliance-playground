@@ -1,7 +1,7 @@
 import chipsalliance.rocketchip.config._
 import chipyard.config.AbstractConfig
 import chipyard.fpga.vcu118._
-import freechips.rocketchip.devices.debug.DebugModuleKey
+import freechips.rocketchip.devices.debug.{DebugModuleKey, JtagDTMConfig, JtagDTMKey}
 import freechips.rocketchip.devices.tilelink.BootROMLocated
 import freechips.rocketchip.diplomacy.DTSTimebase
 import freechips.rocketchip.subsystem._
@@ -54,6 +54,11 @@ class WithCodesignModifications extends Config((site, here, up) => {
   }
   case ExtMem => up(ExtMem, site).map(x => x.copy(master = x.master.copy(size = site(VCU118DDRSize)))) // set extmem to DDR size
   case SerialTLKey => None // remove serialized tl port
+  case JtagDTMKey => JtagDTMConfig(
+    idcodeVersion = 2,
+    idcodePartNum = 0x000,
+    idcodeManufId = 0x489,
+    debugIdleCycles = 5)
 })
 
 class CodesignRocketConfig extends Config(
