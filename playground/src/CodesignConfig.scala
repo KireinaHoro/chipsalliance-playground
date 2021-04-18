@@ -62,7 +62,7 @@ class WithCodesignModifications extends Config((site, here, up) => {
 })
 
 class CodesignRocketConfig extends Config(
-  new DefaultGemminiConfig ++
+  //new DefaultGemminiConfig ++
   new WithNBreakpoints(4) ++
   new WithNBigCores(1) ++
   new AbstractConfig

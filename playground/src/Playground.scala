@@ -13,10 +13,11 @@ import java.nio.file._
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.reflect.io.Directory
-import scala.io.Source
+import scala.io.{AnsiColor, Source}
 
 object Runner extends App {
   def info(msg: Any) = println(Console.GREEN + msg + Console.RESET)
+  def warn(msg: Any) = println(Console.YELLOW + msg + Console.RESET)
 
   def using[A <: { def close(): Unit }, B](r: A)(f: A => B): B = try { f(r) } finally { r.close() }
 
@@ -61,7 +62,11 @@ object Runner extends App {
   ))
 
   val gemminiConf = "gemmini_params.h"
-  Files.move(gemminiConf, Paths.get(build, gemminiConf))
+  try {
+    Files.move(gemminiConf, Paths.get(build, gemminiConf))
+  } catch { case e: Exception =>
+    warn(f"Failed to move gemmini parameter file to build dir: $e")
+  }
 
   info("Generating top and harness...")
 
