@@ -1,6 +1,7 @@
 import chipsalliance.rocketchip.config._
 import chipyard.config.AbstractConfig
 import chipyard.fpga.vcu118._
+import freechips.rocketchip.devices.debug.{DebugModuleKey, JtagDTMConfig, JtagDTMKey}
 import freechips.rocketchip.devices.tilelink.BootROMLocated
 import freechips.rocketchip.diplomacy.DTSTimebase
 import freechips.rocketchip.subsystem._
@@ -17,7 +18,7 @@ case object BootROMPathKey extends Field[String]("dependencies/chipyard/fpga/src
 // directly built bootrom inside the Config snippet
 // this also prevents removal of debug module
 class CodesignVCU118 extends Config(
-  new WithFPGAFrequency(40) ++
+  new WithFPGAFrequency(50) ++
   new WithVCU118ShellPMODSDIO ++
   new WithVCU118ShellPMOD2JTAG ++
   new WithBoardJTAG ++
@@ -26,6 +27,7 @@ class CodesignVCU118 extends Config(
   new WithUART ++
   new WithSPISDCard ++
   new WithDDRMem ++
+  new WithJTAGIOPassthrough ++
   new WithUARTIOPassthrough ++
   new WithSPIIOPassthrough ++
   new WithTLIOPassthrough ++
@@ -39,6 +41,7 @@ class CodesignVCU118 extends Config(
 class WithCodesignModifications extends Config((site, here, up) => {
   case PeripheryBusKey => up(PeripheryBusKey, site).copy(dtsFrequency = Some(site(FPGAFrequencyKey).toInt*1000000))
   case MemoryBusKey => up(MemoryBusKey, site).copy(dtsFrequency = Some(site(FPGAFrequencyKey).toInt*1000000))
+  case DebugModuleKey => up(DebugModuleKey, site).map(_.copy(clockGate = false))
   case DTSTimebase => BigInt(1000000)
   case BootROMLocated(x) => up(BootROMLocated(x), site).map { p =>
     // invoke makefile for sdboot
@@ -51,10 +54,15 @@ class WithCodesignModifications extends Config((site, here, up) => {
   }
   case ExtMem => up(ExtMem, site).map(x => x.copy(master = x.master.copy(size = site(VCU118DDRSize)))) // set extmem to DDR size
   case SerialTLKey => None // remove serialized tl port
+  case JtagDTMKey => JtagDTMConfig(
+    idcodeVersion = 2,
+    idcodePartNum = 0x000,
+    idcodeManufId = 0x489,
+    debugIdleCycles = 5)
 })
 
 class CodesignRocketConfig extends Config(
-  new DefaultGemminiConfig ++
+  //new DefaultGemminiConfig ++
   new WithNBreakpoints(4) ++
   new WithNBigCores(1) ++
   new AbstractConfig

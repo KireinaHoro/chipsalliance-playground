@@ -13,10 +13,11 @@ import java.nio.file._
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import scala.reflect.io.Directory
-import scala.io.Source
+import scala.io.{AnsiColor, Source}
 
 object Runner extends App {
   def info(msg: Any) = println(Console.GREEN + msg + Console.RESET)
+  def warn(msg: Any) = println(Console.YELLOW + msg + Console.RESET)
 
   def using[A <: { def close(): Unit }, B](r: A)(f: A => B): B = try { f(r) } finally { r.close() }
 
@@ -61,7 +62,11 @@ object Runner extends App {
   ))
 
   val gemminiConf = "gemmini_params.h"
-  Files.move(gemminiConf, Paths.get(build, gemminiConf))
+  try {
+    Files.move(gemminiConf, Paths.get(build, gemminiConf))
+  } catch { case e: Exception =>
+    warn(f"Failed to move gemmini parameter file to build dir: $e")
+  }
 
   info("Generating top and harness...")
 
@@ -130,6 +135,23 @@ object Runner extends App {
         |    -ip-vivado-tcls "$$(ls ${bp("*.vivado.tcl").toAbsolutePath})" \\
         |    -board vcu118
         |""".stripMargin)
+  }
+
+  using(new PrintWriter(new File(bp("rerun_impl_from_syn_ckpt.sh")))) {
+    _.write(
+      f"""
+         |#!/usr/bin/env bash
+         |
+         |cd $build
+         |
+         |vivado -nojournal -mode batch \\
+         |  -source ${dp("chipyard", "fpga/scripts/run_impl_bitstream.tcl").toAbsolutePath} \\
+         |  -tclargs \\
+         |    ${bp("obj/post_synth.dcp").toAbsolutePath} \\
+         |    vcu118 \\
+         |    ${bp("debug_obj").toAbsolutePath} \\
+         |    ${dp("fpga-shells", "xilinx/common/tcl").toAbsolutePath}
+         |""".stripMargin)
   }
 
   info("All done.")

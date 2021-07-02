@@ -1,8 +1,24 @@
-# chipsallinace-playground
+## Co-design shell
 
-## Introduction
+The `Runner` class performs most of the generation work (up to Verilog and Vivado script).  Run the following to invoke the class:
+
+```bash
+mill playground.runMain Runner
+```
+
+Runner will generate bash scripts for Vivado bitstream generation.  Two scripts are generated:
+
+```bash
+bash out/generated-src/run_impl.sh # for running synthesis and implementation
+bash out/generated-src/rerun_impl_from_syn_ckpt.sh # for rerunning implementation after modifying synthesis checkpoint
+                                                   # e.g. after adding in ILA
+```
+
+History builds are stored under `out/history-builds` with a minute timestamp, and `out/generated-src` is a symbolic link to one of the history builds (most likely the most recent one).
+
+## `chipsalliance-playground` Introduction
 This is a template repository for those who want to develop RTL based on rocket-chip and even chipyard, being able to edit all sources from chisel environments without publish them to local ivy.
-You can add your own submodule in `build.sc`.  
+You can add your own submodule in `build.sc`.
 For more information please visit [mill documentation](https://com-lihaoyi.github.io/mill/page/configuring-mill.html)
 after adding your own code, you can add your library to playground dependency, and re-index Intellij to add your own library.
 
@@ -11,19 +27,19 @@ For mill use
 ```bash
 mill mill.bsp.BSP/install
 ```
-then open by your favorite IDE, which supports [BSP](https://build-server-protocol.github.io/) 
+then open by your favorite IDE, which supports [BSP](https://build-server-protocol.github.io/)
 
 ## Pending PRs
 Philosophy of this repository is **fast break and fast fix**.
 This repository always tracks remote developing branches, it may need some patches to work, `make patch` will append below in sequence:
 <!-- BEGIN-PATCH -->
-barstools https://github.com/ucb-bar/barstools/pull/101  
-firrtl https://github.com/chipsalliance/firrtl/pull/2276  
-rocket-chip https://github.com/chipsalliance/rocket-chip/pull/2810  
-hwacha https://github.com/ucb-bar/hwacha/pull/30  
-testchipip https://github.com/ucb-bar/testchipip/pull/126  
-fpga-shells https://github.com/sifive/fpga-shells/pull/161  
-fpga-shells https://github.com/sifive/fpga-shells/pull/162  
+barstools https://github.com/ucb-bar/barstools/pull/101
+firrtl https://github.com/chipsalliance/firrtl/pull/2276
+rocket-chip https://github.com/chipsalliance/rocket-chip/pull/2810
+hwacha https://github.com/ucb-bar/hwacha/pull/30
+testchipip https://github.com/ucb-bar/testchipip/pull/126
+fpga-shells https://github.com/sifive/fpga-shells/pull/161
+fpga-shells https://github.com/sifive/fpga-shells/pull/162
 <!-- END-PATCH -->
 
 ## Why not Chipyard
@@ -38,7 +54,7 @@ So generally, this repo is the fast and cleanest way to start your Chisel projec
 You can use this template and start your own job by appending commits on it. GitHub Action will automatically bump all dependencies, you can merge or rebase `sequencer/master` to your branch.
 
 ## System Dependencies
-Currently, only support **Arch Linux, macOS and Debian sid**, you can PR your own distributions, like Fedora.  
+Currently, only support **Arch Linux, macOS and Debian sid**, you can PR your own distributions, like Fedora.
 **Notice Ubuntu and CentOS is unacceptable, since they have a stale package repository, not possible use official package manager to install these requirements, if you insist using them, please install requirements below by your self.**
 * GNU Make
   - Arch Linux: make
@@ -72,7 +88,7 @@ This package is the standalone tests to check is bumping correct or not, served 
 * clang: bootrom cross compiling and veriltor C++ -> binary compiling
   - Arch Linux: clang
   - Debian: clang
-* llvm: gnu toolchain replacement 
+* llvm: gnu toolchain replacement
   - Arch Linux: llvm
   - Debian: llvm
 * lld: LLVM based linker
@@ -89,7 +105,7 @@ This package is the standalone tests to check is bumping correct or not, served 
   - Debian: ninja-build
 
 ### rocketchip
-This package is a replacement to RocketChip Makefile based generator, it directly generate a simple RocketChip emulator with verilator and linked to spike. 
+This package is a replacement to RocketChip Makefile based generator, it directly generate a simple RocketChip emulator with verilator and linked to spike.
 ```
 mill sanitytests.rocketchip
 ```
