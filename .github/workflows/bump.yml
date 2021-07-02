@@ -4,8 +4,12 @@ on:
   push:
 jobs:
   bump:
+    if: github.repository == 'sequencer/chipsalliance-playground'
     runs-on: ubuntu-latest
+    container: archlinux/archlinux:latest
     steps:
+      - name: Install dependencies
+        run: pacman -Syu --noconfirm make parallel wget cmake ninja mill dtc verilator git llvm clang lld
       - uses: actions/checkout@v2
         with:
           submodules: 'true'
@@ -16,12 +20,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: out
-          key: ${{ runner.os }}-mill-${{ hashFiles('**/build.sc') }}
-          restore-keys: ${{ runner.os }}-mill-
-      - name: Setup Mill
-        uses: jodersky/setup-mill@v0.2.3
-        with:
-          mill-version: 0.9.6
+          key: mill-${{ hashFiles('**/build.sc') }}
+          restore-keys: mill-
       - name: Init
         run: |
           git config --global user.email "liu@jiuyang.me"
@@ -31,9 +31,13 @@ jobs:
         id: bump
         run: make bump
       - name: Patch
-        run: make patch
+        run: |
+          make update-patches
+          make patch
       - name: Check Mill Compile
         run: make compile
+      - name: Check Sanity
+        run: make test
       - name: Commit
         run: |
           make depatch
