@@ -402,7 +402,7 @@ object spike extends Module {
 // Dummy
 
 object playground extends CommonModule {
-  override def moduleDeps = super.moduleDeps ++ Seq(myrocketchip, inclusivecache, blocks, rocketdsputils, shells, firesim, boom, chipyard, chipyard.fpga, chipyard.utilities)
+  override def moduleDeps = super.moduleDeps ++ Seq(myrocketchip, inclusivecache, blocks, rocketdsputils, shells, firesim, boom, chipyard, chipyard.fpga, chipyard.utilities, testchipip)
 
   // add some scala ivy module you like here.
   override def ivyDeps = Agg(
@@ -411,10 +411,8 @@ object playground extends CommonModule {
   )
 
   // use scalatest as your test framework
-  object tests extends Tests with TestModule.ScalaTest {
-    override def ivyDeps = Agg(
-      ivys.scalatest
-    )
-    override def moduleDeps = super.moduleDeps ++ Seq(mychiseltest)
+  object tests extends Tests with TestModule.Utest {
+    override def ivyDeps = Agg(ivys.utest)
+    override def moduleDeps = super.moduleDeps ++ Seq(mychiseltest, sanitytests, sanitytests.rocketchip, sanitytests.vcu118)
   }
 }
