@@ -43,7 +43,7 @@ case class TestHarness[M <: RawModule](
     }
     val blackbox =
       os.read.lines(outputDirectory / firrtl.transforms.BlackBoxSourceHelper.defaultFileListName).map(Path(_))
-    val verilatorBuildDir = outputDirectory / "build"
+    val verilatorBuildDir = outputDirectory / "verilated-build"
     val cmakefilelist = verilatorBuildDir / "CMakeLists.txt"
     os.makeDir(verilatorBuildDir)
     val verilatorArgs = Seq(
@@ -86,6 +86,7 @@ case class TestHarness[M <: RawModule](
          |  TOP_MODULE TestHarness
          |  PREFIX VTestHarness
          |  VERILATOR_ARGS $verilatorArgs
+         |  TRACE
          |)
          |""".stripMargin
       // format: on

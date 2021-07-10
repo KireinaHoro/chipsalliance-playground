@@ -12,9 +12,12 @@ class TestBootRom
           val elf = tmp / "bootrom.elf"
           val bin = tmp / "bootrom.bin"
           val img = tmp / "bootrom.img"
+
+          val pathPrefix = "/Volumes/llvm/install/rv64-clang-mlir/bin/"
+
           // format: off
           proc(
-            "clang",
+            f"${pathPrefix}clang",
             "--target=riscv64", "-march=rv64gc",
             "-mno-relax",
             "-static",
@@ -25,7 +28,7 @@ class TestBootRom
             "-o", elf
           ).call()
           proc(
-            "llvm-objcopy",
+            f"${pathPrefix}llvm-objcopy",
             "-O", "binary",
             elf,
             bin
