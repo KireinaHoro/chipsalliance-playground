@@ -68,7 +68,7 @@ case class TestHarness[M <: RawModule](
     os.write(
       cmakefilelist,
       // format: off
-      s"""cmake_minimum_required(VERSION 3.20)
+      s"""cmake_minimum_required(VERSION 3.18)
          |project(emulator)
          |include_directories(${resource("usr/include")})
          |link_directories(${resource("usr/lib")})
